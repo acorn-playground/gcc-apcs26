@@ -1,0 +1,8 @@
+760ee12234370669dd2001c4827112442c56321a7a0690fef489ccd0a774fb54  sources/gccsdk-3.4.6-apcs26.tar.gz
+e236ea3a1ccf5f6c270b1c4bb60726f371fa49459a8eaaebc90b216b328daf2b  sources/m4-1.4.20.tar.xz
+ba885c1319578d6c94d46e9b0dceb4014caafe2490e437a0dbca3f270a223f5a  sources/autoconf-2.72.tar.xz
+fdc896ef43a39969e9bc3d5ba6c53cbc93f294fd18a7ac19f16e56ab4eb53106  patches/series
+0fddd789e8c8292e7d815f3be9835f773dc9bf62315a965dcfc6c3e0966ffc78  patches/gccsdk-3.4.6-host.patch
+d6521cb554f5f5a22bb0c9952db5da96c8049c9c31963c314d2b0eaf5b4de5ef  patches/gccsdk-3.4.6-rom-library.patch
+5b251af6b60c591b46bb399ba3e97328208fea10955de3cace3ee702046ed03a  patches/gccsdk-3.4.6-signed-frame-offset.patch
+b4777660119fa13bbfaf246a655a8a361474f1ed8092d0126f4e8eb991e246d3  patches/gccsdk-3.4.6-signed-prologue-offset.patch
