@@ -10,7 +10,7 @@ it either crashes or, worse, quietly generates wrong code. The patches here
 fix the host bugs behind that without changing what the compiler generates for
 the target.
 
-It is maintained as part of [ArcLibre](https://github.com/acorn-playground/ArcLibre), a freely redistributable RISC OS 3.11-compatible ROM, which compiles its original C components (SharedCLibrary, RISC_OSLib, FilerAct, Draw, Paint
+It is maintained as part of [ArcLibre](https://github.com/acorn-playground/arclibre), a freely redistributable RISC OS 3.11-compatible ROM, which compiles its original C components (SharedCLibrary, RISC_OSLib, FilerAct, Draw, Paint
 and others) with it.
 
 ## Quick start
