@@ -1,4 +1,4 @@
-# gccsdk-apcs26
+# gcc-apcs26
 
 GCCSDK 3.4.6, the 26-bit ARM2/APCS-26 RISC OS C compiler and the Drlink
 linker, patched to build and generate correct code on modern 64-bit hosts.
@@ -16,8 +16,8 @@ and others) with it.
 ## Quick start
 
 ```sh
-git clone https://github.com/acorn-playground/gccsdk-apcs26.git
-cd gccsdk-apcs26
+git clone https://github.com/acorn-playground/gcc-apcs26.git
+cd gcc-apcs26
 ./build.sh
 ./tests/run.sh
 ```
@@ -40,18 +40,28 @@ Running `./build.sh` again only redoes the steps whose inputs changed. Delete
 ### Requirements
 
 - A host C compiler, `make`, `patch` and `tar` with xz support.
-- macOS: the Xcode command line tools (`xcode-select --install`) are enough.
-- Linux: `build-essential` and `xz-utils` (Debian/Ubuntu names) should be
-  enough, but see the next section.
+- macOS: the Xcode command line tools (`xcode-select --install`) are enough;
+  they include the Bison, flex and M4 the build uses.
+- Linux: Clang, Bison, flex and GNU M4 as well. On Debian or Ubuntu:
+
+  ```sh
+  sudo apt install build-essential clang bison flex m4 xz-utils
+  ```
+
+  `build.sh` uses Clang when it's installed. Use it on Linux: GCC 15
+  defaults to C23, which breaks the bundled M4's gnulib on glibc 2.43.
 
 GNU M4 and Autoconf are built from the copies in `sources/`, so their host
 versions don't matter.
 
 ### Tested hosts
 
-Only **Apple Silicon macOS** (Apple Clang) has been tested. The patches fix
-64-bit host problems in general, so x86-64 Linux and macOS are expected to
-work, but nobody has checked yet. Reports and fixes are welcome.
+- **Apple Silicon macOS** (Apple Clang 21): `build.sh` and `tests/run.sh`.
+- **x86-64 Linux** (Ubuntu 26.04, Clang 21, glibc 2.43): built as part of
+  ArcLibre, whose ROM it compiles to the same bytes as the macOS build.
+  `tests/run.sh` has not been run there yet.
+
+Intel macOS has not been tried. Reports and fixes are welcome.
 
 ## Using it
 
@@ -84,6 +94,7 @@ Applied in order by `build.sh` from `patches/series`, each with
 | `gccsdk-3.4.6-rom-library.patch` | Only active with `-mlibrary-static-data-offset`, for code that runs from ROM inside the SharedCLibrary's data contract: read-only constants stay in ROM rather than being relocated into RAM. ArcLibre needs it; ordinary programs are unaffected. |
 | `gccsdk-3.4.6-signed-frame-offset.patch` | `arm_compute_initial_elimination_offset` returned an unsigned 32-bit value. A frameless function's -4 became +4294967292 on a 64-bit host, producing `sub a2, sp, #-4294967296`: an invalid stack address for the first stacked argument. |
 | `gccsdk-3.4.6-signed-prologue-offset.patch` | The prologue negated an unsigned `args_to_push`, so every function with a frame got `sub fp, ip, #-4294967292` instead of `sub fp, ip, #4`. Assemblers that wrap immediates to 32 bits happen to encode this correctly; the patch makes the output correct regardless. |
+| `gccsdk-3.4.6-case-insensitive.patch` | RISC OS filenames are case-insensitive, and sources rely on it (`#include "h.EditIntern.txt1"` for a file stored as `h.editintern.txt1`). On a case-sensitive host such as Linux, when an `#include` isn't found exactly, each missing path component takes its unique case-insensitive match. The spelling the source used is kept for `__FILE__` and line markers. On macOS's case-insensitive volumes the exact open already succeeds, so nothing changes there. |
 
 ## Tests
 

@@ -11,6 +11,7 @@
 #     integer (such as #-4294967292), the signature of the patched bugs.
 #  3. gcc -c must produce an AOF object (chunk file) through the bundled
 #     assembler.
+#  4. An #include whose case differs from the file's name must be found.
 #
 #   ./tests/run.sh             check against tests/expected
 #   ./tests/run.sh --update    rewrite tests/expected from this build
@@ -72,6 +73,18 @@ if "$GCC" $COMMON -O2 -c tests/cases/arith.c -o "$OUT/arith.o" 2>"$OUT/arith-c.e
   echo 'ok   gcc -c produces an AOF object'
 else
   echo 'FAIL gcc -c did not produce an AOF object'; failures=$((failures + 1))
+fi
+
+# An #include spelled with different case from the file, as RISC OS sources
+# do (gccsdk-3.4.6-case-insensitive.patch). On a case-insensitive volume, such
+# as macOS's default, this passes without the patch.
+mkdir -p "$OUT/include/h"
+printf '#define CASE_CHECK 42\n' >"$OUT/include/h/editintern"
+printf '#include "h/EditIntern"\nint case_check(void) { return CASE_CHECK; }\n' >"$OUT/case.c"
+if "$GCC" $COMMON -O2 -I"$OUT/include" -S "$OUT/case.c" -o "$OUT/case.s" 2>"$OUT/case.err" && grep -q '#42' "$OUT/case.s"; then
+  echo 'ok   #include finds a file whose name differs in case'
+else
+  echo 'FAIL #include of a file whose name differs in case'; failures=$((failures + 1))
 fi
 
 [ -x "$PREFIX/bin/drlink" ] && echo 'ok   drlink installed' || { echo 'FAIL drlink missing'; failures=$((failures + 1)); }
